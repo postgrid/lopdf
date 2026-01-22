@@ -73,7 +73,7 @@ impl Document {
             }
             XrefType::CrossReferenceStream => {
                 // Cross Reference Stream instead of XRef and Trailer
-                self.write_cross_reference_stream(&mut target, &mut xref, xref_start as u32)?;
+                self.write_cross_reference_stream(&mut target, &mut xref, xref_start as u64)?;
             }
         }
         // Write `startxref` part of trailer
@@ -187,7 +187,7 @@ impl Document {
                 self.write_trailer(&mut target)?;
             }
             XrefType::CrossReferenceStream => {
-                self.write_cross_reference_stream(&mut target, &mut xref, xref_start as u32)?;
+                self.write_cross_reference_stream(&mut target, &mut xref, xref_start as u64)?;
             }
         }
 
@@ -200,7 +200,7 @@ impl Document {
     /// Insert an `Object` to the end of the PDF (not visible when inspecting `Document`).
     /// Note: This is different from the "Cross Reference Table".
     fn write_cross_reference_stream<W: Write>(
-        &mut self, file: &mut CountingWrite<&mut W>, xref: &mut Xref, xref_start: u32,
+        &mut self, file: &mut CountingWrite<&mut W>, xref: &mut Xref, xref_start: u64,
     ) -> Result<()> {
         // Increment max_id to account for CRS.
         self.max_id += 1;
@@ -319,7 +319,7 @@ impl IncrementalDocument {
             XrefType::CrossReferenceStream => {
                 // Cross Reference Stream instead of XRef and Trailer
                 self.new_document
-                    .write_cross_reference_stream(&mut target, &mut xref, xref_start as u32)?;
+                    .write_cross_reference_stream(&mut target, &mut xref, xref_start as u64)?;
             }
         }
         // Write `startxref` part of trailer
@@ -477,7 +477,7 @@ impl Writer {
     fn write_indirect_object<W: Write>(
         file: &mut CountingWrite<&mut W>, id: u32, generation: u16, object: &Object, xref: &mut Xref,
     ) -> Result<()> {
-        let offset = file.bytes_written as u32;
+        let offset = file.bytes_written as u64;
         xref.insert(id, XrefEntry::Normal { offset, generation });
         write!(
             file,

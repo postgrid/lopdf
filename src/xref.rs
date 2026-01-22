@@ -27,7 +27,7 @@ pub enum XrefType {
 pub enum XrefEntry {
     Free, // TODO add generation number
     UnusableFree,
-    Normal { offset: u32, generation: u16 },
+    Normal { offset: u64, generation: u16 },
     Compressed { container: u32, index: u16 },
 }
 

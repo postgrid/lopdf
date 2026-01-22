@@ -1025,7 +1025,7 @@ impl Reader<'_> {
     }
 
     /// Get object offset by object ID.
-    fn get_offset(&self, id: ObjectId) -> Result<u32> {
+    fn get_offset(&self, id: ObjectId) -> Result<u64> {
         let entry = self.document.reference_table.get(id.0).ok_or(Error::MissingXrefEntry)?;
         match *entry {
             XrefEntry::Normal { offset, generation } if generation == id.1 => Ok(offset),
