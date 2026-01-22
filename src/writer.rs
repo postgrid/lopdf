@@ -216,9 +216,9 @@ impl Document {
         // Update `max_id` in trailer
         self.trailer.set("Size", i64::from(self.max_id + 1));
         // Set the size of each entry in bytes (default for PDFs is `[1 2 1]`)
-        // In our case we use `[u8, u32, u16]` for each entry
+        // In our case we use `[u8, u64, u16]` for each entry
         // to keep things simple and working at all times.
-        self.trailer.set("W", Array(vec![Integer(1), Integer(4), Integer(2)]));
+        self.trailer.set("W", Array(vec![Integer(1), Integer(std::mem::size_of_val(&xref_start) as i64), Integer(2)]));
         // Note that `ASCIIHexDecode` does not work correctly,
         // but is still useful for debugging sometimes.
         let filter = XRefStreamFilter::None;
