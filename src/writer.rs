@@ -428,8 +428,11 @@ impl Writer {
             // Add indexes to list
             xref_index.push(Integer(section.starting_id as i64));
             xref_index.push(Integer(section.entries.len() as i64));
+
             // Add entries to stream
-            let mut obj_id = section.starting_id;
+            // NOTE(Apaar): We must cast these into u64 so that correct number of bytes is written
+            // (we always assume 8 bytes as the field width of the second value).
+            let mut obj_id = section.starting_id as u64;
             for entry in section.entries {
                 match entry {
                     XrefEntry::Free => {
@@ -453,7 +456,7 @@ impl Writer {
                     XrefEntry::Compressed { container, index } => {
                         // Type 2
                         xref_stream.push(2);
-                        xref_stream.extend(container.to_be_bytes());
+                        xref_stream.extend((container as u64).to_be_bytes());
                         xref_stream.extend(index.to_be_bytes());
                     }
                 }
